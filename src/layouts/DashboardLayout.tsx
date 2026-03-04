@@ -10,10 +10,20 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { LayoutDashboard, User, LogOut, Menu, X } from "lucide-react";
+import {
+  LayoutDashboard,
+  User,
+  LogOut,
+  Menu,
+  X,
+  FileText,
+  FileSearch,
+} from "lucide-react";
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/dashboard/resumes", label: "Resume", icon: FileText },
+  { to: "/dashboard/ats-checks", label: "ATS Review", icon: FileSearch },
   { to: "/dashboard/profile", label: "Profile", icon: User },
 ];
 

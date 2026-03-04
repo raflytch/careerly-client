@@ -8,6 +8,12 @@ import AuthCallbackPage from "@/modules/auth/pages/AuthCallbackPage";
 import RestoreAccountPage from "@/modules/auth/pages/RestoreAccountPage";
 import DashboardPage from "@/modules/dashboard/pages/DashboardPage";
 import ProfilePage from "@/modules/dashboard/pages/ProfilePage";
+import ResumesPage from "@/modules/resume/pages/ResumesPage";
+import CreateResumePage from "@/modules/resume/pages/CreateResumePage";
+import EditResumePage from "@/modules/resume/pages/EditResumePage";
+import ResumeDetailPage from "@/modules/resume/pages/ResumeDetailPage";
+import AtsChecksPage from "@/modules/ats/pages/AtsChecksPage";
+import AtsCheckDetailPage from "@/modules/ats/pages/AtsCheckDetailPage";
 import NotFoundPage from "@/modules/errors/NotFoundPage";
 
 export const router = createBrowserRouter([
@@ -46,6 +52,30 @@ export const router = createBrowserRouter([
           {
             path: "profile",
             element: <ProfilePage />,
+          },
+          {
+            path: "resumes",
+            element: <ResumesPage />,
+          },
+          {
+            path: "resumes/create",
+            element: <CreateResumePage />,
+          },
+          {
+            path: "resumes/:id",
+            element: <ResumeDetailPage />,
+          },
+          {
+            path: "resumes/:id/edit",
+            element: <EditResumePage />,
+          },
+          {
+            path: "ats-checks",
+            element: <AtsChecksPage />,
+          },
+          {
+            path: "ats-checks/:id",
+            element: <AtsCheckDetailPage />,
           },
         ],
       },
