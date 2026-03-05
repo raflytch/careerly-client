@@ -1,14 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import { getUserProfile } from "@/services/queries/auth.query";
+import { useUserProfile } from "@/services/queries/auth.query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DashboardPage() {
-  const { data, isLoading } = useQuery({
-    queryKey: ["user-profile"],
-    queryFn: getUserProfile,
-  });
+  const { data, isLoading } = useUserProfile();
 
   const profile = data?.data;
 

@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import {
-  createResume,
-  updateResume,
+  useCreateResume,
+  useUpdateResume,
 } from "@/services/mutations/resume.mutation";
 import type {
   CreateResumePayload,
@@ -98,7 +96,6 @@ const EMPTY_PROJECT: Project = {
 
 export default function ResumeForm({ resume }: ResumeFormProps) {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const isEdit = !!resume;
 
   const [title, setTitle] = useState(resume?.title ?? "");
@@ -145,19 +142,9 @@ export default function ResumeForm({ resume }: ResumeFormProps) {
     Record<number, string>
   >({});
 
-  const mutation = useMutation({
-    mutationFn: (payload: CreateResumePayload) =>
-      isEdit ? updateResume(resume.id, payload) : createResume(payload),
-    onSuccess: (response) => {
-      toast.success(response.message);
-      queryClient.invalidateQueries({ queryKey: ["resumes"] });
-      queryClient.invalidateQueries({ queryKey: ["resume-quota"] });
-      navigate("/dashboard/resumes", { replace: true });
-    },
-    onError: () => {
-      toast.error(isEdit ? "Gagal mengupdate resume" : "Gagal membuat resume");
-    },
-  });
+  const createMutation = useCreateResume();
+  const updateMutation = useUpdateResume(resume?.id ?? "");
+  const mutation = isEdit ? updateMutation : createMutation;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

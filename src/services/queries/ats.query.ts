@@ -1,12 +1,14 @@
+import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/config/axios";
 import type { ApiResponse } from "@/@types";
-import type {
-  AtsCheck,
-  AtsCheckListResponse,
-  AtsCheckCreateResponse,
-} from "@/@types/ats";
+import type { AtsCheck, AtsCheckListResponse } from "@/@types/ats";
 
-export const getAtsChecks = async (
+export const atsKeys = {
+  all: ["ats-checks"] as const,
+  detail: (id: string) => ["ats-check", id] as const,
+};
+
+const getAtsChecks = async (
   page = 1,
   limit = 10,
 ): Promise<ApiResponse<AtsCheckListResponse>> => {
@@ -16,9 +18,20 @@ export const getAtsChecks = async (
   return data;
 };
 
-export const getAtsCheckById = async (
-  id: string,
-): Promise<ApiResponse<AtsCheck>> => {
+const getAtsCheckById = async (id: string): Promise<ApiResponse<AtsCheck>> => {
   const { data } = await axiosInstance.get(`/ats-checks/${id}`);
   return data;
 };
+
+export const useAtsChecks = (page = 1, limit = 50) =>
+  useQuery({
+    queryKey: atsKeys.all,
+    queryFn: () => getAtsChecks(page, limit),
+  });
+
+export const useAtsCheckById = (id?: string) =>
+  useQuery({
+    queryKey: atsKeys.detail(id!),
+    queryFn: () => getAtsCheckById(id!),
+    enabled: !!id,
+  });

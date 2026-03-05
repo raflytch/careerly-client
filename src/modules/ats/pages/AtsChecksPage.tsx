@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { getAtsChecks } from "@/services/queries/ats.query";
-import { analyzeAts, deleteAtsCheck } from "@/services/mutations/ats.mutation";
+import { useAtsChecks } from "@/services/queries/ats.query";
+import {
+  useAnalyzeAts,
+  useDeleteAtsCheck,
+} from "@/services/mutations/ats.mutation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -23,6 +24,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { toast } from "sonner";
 import {
   FileSearch,
   Upload,
@@ -57,39 +59,12 @@ function getScoreBadge(score: number) {
 }
 
 export default function AtsChecksPage() {
-  const queryClient = useQueryClient();
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["ats-checks"],
-    queryFn: () => getAtsChecks(1, 50),
-  });
-
-  const analyzeMutation = useMutation({
-    mutationFn: analyzeAts,
-    onSuccess: (response) => {
-      toast.success(response.message);
-      queryClient.invalidateQueries({ queryKey: ["ats-checks"] });
-      queryClient.invalidateQueries({ queryKey: ["resume-quota"] });
-    },
-    onError: () => {
-      toast.error("Gagal menganalisis CV");
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: deleteAtsCheck,
-    onSuccess: (response) => {
-      toast.success(response.message);
-      queryClient.invalidateQueries({ queryKey: ["ats-checks"] });
-      queryClient.invalidateQueries({ queryKey: ["resume-quota"] });
-      setDeleteId(null);
-    },
-    onError: () => {
-      toast.error("Gagal menghapus analisis");
-    },
-  });
+  const { data, isLoading } = useAtsChecks();
+  const analyzeMutation = useAnalyzeAts();
+  const deleteMutation = useDeleteAtsCheck(() => setDeleteId(null));
 
   const handleFileUpload = (file: File) => {
     const validTypes = [

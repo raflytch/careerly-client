@@ -1,6 +1,8 @@
 import { useParams, useNavigate, Link } from "react-router";
-import { useQuery } from "@tanstack/react-query";
-import { getResumeById } from "@/services/queries/resume.query";
+import {
+  useResumeById,
+  useDownloadResumePdf,
+} from "@/services/queries/resume.query";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,6 +17,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   ArrowLeft,
   Pencil,
+  Download,
+  Loader2,
   Mail,
   Phone,
   MapPin,
@@ -32,11 +36,8 @@ export default function ResumeDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["resume", id],
-    queryFn: () => getResumeById(id!),
-    enabled: !!id,
-  });
+  const { data, isLoading, isError } = useResumeById(id);
+  const downloadPdfMutation = useDownloadResumePdf();
 
   if (isLoading) {
     return (
@@ -84,12 +85,32 @@ export default function ResumeDetailPage() {
             </p>
           </div>
         </div>
-        <Button asChild className="gap-2">
-          <Link to={`/dashboard/resumes/${resume.id}/edit`}>
-            <Pencil className="size-4" />
-            Edit Resume
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            className="gap-2"
+            disabled={downloadPdfMutation.isPending}
+            onClick={() =>
+              downloadPdfMutation.mutate({
+                id: resume.id,
+                title: resume.title,
+              })
+            }
+          >
+            {downloadPdfMutation.isPending ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Download className="size-4" />
+            )}
+            Download PDF
+          </Button>
+          <Button asChild className="gap-2">
+            <Link to={`/dashboard/resumes/${resume.id}/edit`}>
+              <Pencil className="size-4" />
+              Edit Resume
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <Card>

@@ -1,6 +1,5 @@
 import { useParams, useNavigate } from "react-router";
-import { useQuery } from "@tanstack/react-query";
-import { getResumeById } from "@/services/queries/resume.query";
+import { useResumeById } from "@/services/queries/resume.query";
 import { Skeleton } from "@/components/ui/skeleton";
 import ResumeForm from "@/modules/resume/components/ResumeForm";
 
@@ -8,11 +7,7 @@ export default function EditResumePage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["resume", id],
-    queryFn: () => getResumeById(id!),
-    enabled: !!id,
-  });
+  const { data, isLoading, isError } = useResumeById(id);
 
   if (isLoading) {
     return (

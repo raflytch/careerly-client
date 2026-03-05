@@ -1,8 +1,6 @@
 import { useRef, useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { getUserProfile } from "@/services/queries/auth.query";
-import { updateProfile } from "@/services/mutations/user.mutation";
+import { useUserProfile } from "@/services/queries/auth.query";
+import { useUpdateProfile } from "@/services/mutations/user.mutation";
 import { useAuthStore } from "@/stores/auth.store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,15 +20,10 @@ import { Camera, Loader2 } from "lucide-react";
 import DeleteAccountDialog from "@/modules/dashboard/components/DeleteAccountDialog";
 
 export default function ProfilePage() {
-  const queryClient = useQueryClient();
   const setUser = useAuthStore((state) => state.setUser);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["user-profile"],
-    queryFn: getUserProfile,
-  });
-
+  const { data, isLoading } = useUserProfile();
   const profile = data?.data;
 
   const [name, setName] = useState("");
@@ -43,25 +36,7 @@ export default function ProfilePage() {
     setInitialized(true);
   }
 
-  const mutation = useMutation({
-    mutationFn: (formData: FormData) => updateProfile(formData),
-    onSuccess: (response) => {
-      toast.success(response.message);
-      queryClient.invalidateQueries({ queryKey: ["user-profile"] });
-      if (profile) {
-        setUser({
-          ...profile.user,
-          name,
-          avatar_url: avatarPreview ?? profile.user.avatar_url,
-        });
-      }
-      setAvatarFile(null);
-      setAvatarPreview(null);
-    },
-    onError: () => {
-      toast.error("Gagal mengupdate profile");
-    },
-  });
+  const mutation = useUpdateProfile();
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -77,7 +52,19 @@ export default function ProfilePage() {
     if (avatarFile) {
       formData.append("avatar", avatarFile);
     }
-    mutation.mutate(formData);
+    mutation.mutate(formData, {
+      onSuccess: () => {
+        if (profile) {
+          setUser({
+            ...profile.user,
+            name,
+            avatar_url: avatarPreview ?? profile.user.avatar_url,
+          });
+        }
+        setAvatarFile(null);
+        setAvatarPreview(null);
+      },
+    });
   };
 
   if (isLoading) {

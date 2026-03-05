@@ -1,12 +1,8 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
-import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
-import { useAuthStore } from "@/stores/auth.store";
 import {
-  requestDeleteOtp,
-  resendDeleteOtp,
-  verifyDeleteOtp,
+  useRequestDeleteOtp,
+  useResendDeleteOtp,
+  useVerifyDeleteOtp,
 } from "@/services/mutations/user.mutation";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,50 +24,19 @@ import { Loader2, Trash2 } from "lucide-react";
 type Step = "confirm" | "otp";
 
 export default function DeleteAccountDialog() {
-  const navigate = useNavigate();
-  const logoutStore = useAuthStore((state) => state.logout);
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<Step>("confirm");
   const [otp, setOtp] = useState("");
-
-  const requestOtpMutation = useMutation({
-    mutationFn: requestDeleteOtp,
-    onSuccess: (response) => {
-      toast.success(response.message);
-      setStep("otp");
-    },
-    onError: () => {
-      toast.error("Gagal mengirim OTP");
-    },
-  });
-
-  const resendOtpMutation = useMutation({
-    mutationFn: resendDeleteOtp,
-    onSuccess: (response) => {
-      toast.success(response.message);
-    },
-    onError: () => {
-      toast.error("Gagal mengirim ulang OTP");
-    },
-  });
-
-  const verifyOtpMutation = useMutation({
-    mutationFn: (otpCode: string) => verifyDeleteOtp(otpCode),
-    onSuccess: (response) => {
-      toast.success(response.message);
-      logoutStore();
-      navigate("/login", { replace: true });
-    },
-    onError: () => {
-      toast.error("OTP tidak valid");
-    },
-  });
 
   const handleClose = () => {
     setOpen(false);
     setStep("confirm");
     setOtp("");
   };
+
+  const requestOtpMutation = useRequestDeleteOtp(() => setStep("otp"));
+  const resendOtpMutation = useResendDeleteOtp();
+  const verifyOtpMutation = useVerifyDeleteOtp();
 
   return (
     <Dialog

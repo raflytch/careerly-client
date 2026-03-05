@@ -1,6 +1,5 @@
 import { useParams, useNavigate } from "react-router";
-import { useQuery } from "@tanstack/react-query";
-import { getAtsCheckById } from "@/services/queries/ats.query";
+import { useAtsCheckById } from "@/services/queries/ats.query";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -60,11 +59,7 @@ export default function AtsCheckDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["ats-check", id],
-    queryFn: () => getAtsCheckById(id!),
-    enabled: !!id,
-  });
+  const { data, isLoading, isError } = useAtsCheckById(id);
 
   if (isLoading) {
     return (

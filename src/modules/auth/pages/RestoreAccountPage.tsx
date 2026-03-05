@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { toast } from "sonner";
 import {
-  requestRestoreOtp,
-  resendRestoreOtp,
-  verifyRestoreOtp,
+  useRequestRestoreOtp,
+  useResendRestoreOtp,
+  useVerifyRestoreOtp,
 } from "@/services/mutations/auth.mutation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,50 +29,21 @@ export default function RestoreAccountPage() {
   const [step, setStep] = useState<Step>("email");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [resending, setResending] = useState(false);
 
-  const handleRequestOtp = async (e: React.FormEvent) => {
+  const requestOtpMutation = useRequestRestoreOtp(() => setStep("otp"));
+  const resendOtpMutation = useResendRestoreOtp();
+  const verifyOtpMutation = useVerifyRestoreOtp(() =>
+    navigate("/login", { replace: true }),
+  );
+
+  const handleRequestOtp = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-
-    try {
-      const response = await requestRestoreOtp(email);
-      toast.success(response.message);
-      setStep("otp");
-    } catch {
-      toast.error("Gagal mengirim OTP, coba lagi");
-    } finally {
-      setLoading(false);
-    }
+    requestOtpMutation.mutate(email);
   };
 
-  const handleResendOtp = async () => {
-    setResending(true);
-
-    try {
-      const response = await resendRestoreOtp(email);
-      toast.success(response.message);
-    } catch {
-      toast.error("Gagal mengirim ulang OTP");
-    } finally {
-      setResending(false);
-    }
-  };
-
-  const handleVerifyOtp = async (e: React.FormEvent) => {
+  const handleVerifyOtp = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-
-    try {
-      const response = await verifyRestoreOtp(email, otp);
-      toast.success(response.message);
-      navigate("/login", { replace: true });
-    } catch {
-      toast.error("OTP tidak valid");
-    } finally {
-      setLoading(false);
-    }
+    verifyOtpMutation.mutate({ email, otp });
   };
 
   return (
@@ -101,8 +71,12 @@ export default function RestoreAccountPage() {
                   required
                 />
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? (
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={requestOtpMutation.isPending}
+              >
+                {requestOtpMutation.isPending ? (
                   <Loader2 className="size-4 animate-spin" />
                 ) : (
                   "Kirim OTP"
@@ -136,9 +110,9 @@ export default function RestoreAccountPage() {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={loading || otp.length < 6}
+                disabled={verifyOtpMutation.isPending || otp.length < 6}
               >
-                {loading ? (
+                {verifyOtpMutation.isPending ? (
                   <Loader2 className="size-4 animate-spin" />
                 ) : (
                   "Verifikasi"
@@ -148,10 +122,10 @@ export default function RestoreAccountPage() {
                 type="button"
                 variant="ghost"
                 className="w-full"
-                onClick={handleResendOtp}
-                disabled={resending}
+                onClick={() => resendOtpMutation.mutate(email)}
+                disabled={resendOtpMutation.isPending}
               >
-                {resending ? (
+                {resendOtpMutation.isPending ? (
                   <Loader2 className="size-4 animate-spin" />
                 ) : (
                   "Kirim Ulang OTP"

@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { getResumes, getResumeQuota } from "@/services/queries/resume.query";
-import { deleteResume } from "@/services/mutations/resume.mutation";
+import {
+  useResumes,
+  useResumeQuota,
+  useDownloadResumePdf,
+} from "@/services/queries/resume.query";
+import { useDeleteResume } from "@/services/mutations/resume.mutation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -31,34 +33,16 @@ import {
   Loader2,
   Briefcase,
   GraduationCap,
+  Download,
 } from "lucide-react";
 
 export default function ResumesPage() {
-  const queryClient = useQueryClient();
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const { data: resumesData, isLoading } = useQuery({
-    queryKey: ["resumes"],
-    queryFn: () => getResumes(1, 50),
-  });
-
-  const { data: quotaData } = useQuery({
-    queryKey: ["resume-quota"],
-    queryFn: getResumeQuota,
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: deleteResume,
-    onSuccess: (response) => {
-      toast.success(response.message);
-      queryClient.invalidateQueries({ queryKey: ["resumes"] });
-      queryClient.invalidateQueries({ queryKey: ["resume-quota"] });
-      setDeleteId(null);
-    },
-    onError: () => {
-      toast.error("Gagal menghapus resume");
-    },
-  });
+  const { data: resumesData, isLoading } = useResumes();
+  const { data: quotaData } = useResumeQuota();
+  const deleteMutation = useDeleteResume(() => setDeleteId(null));
+  const downloadPdfMutation = useDownloadResumePdf();
 
   const resumes = resumesData?.data?.resumes ?? [];
   const quota = quotaData?.data;
@@ -217,6 +201,24 @@ export default function ResumesPage() {
                       <Pencil className="size-3.5" />
                       Edit
                     </Link>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-1.5"
+                    disabled={downloadPdfMutation.isPending}
+                    onClick={() =>
+                      downloadPdfMutation.mutate({
+                        id: resume.id,
+                        title: resume.title,
+                      })
+                    }
+                  >
+                    {downloadPdfMutation.isPending ? (
+                      <Loader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <Download className="size-3.5" />
+                    )}
                   </Button>
                   <Button
                     variant="outline"
