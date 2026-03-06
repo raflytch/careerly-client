@@ -165,15 +165,22 @@ export default function InterviewDetailPage() {
   const currentQuestion = useInterviewFormStore((s) => s.currentQuestion);
   const setAnswer = useInterviewFormStore((s) => s.setAnswer);
   const setCurrentQuestion = useInterviewFormStore((s) => s.setCurrentQuestion);
+  const init = useInterviewFormStore((s) => s.init);
   const reset = useInterviewFormStore((s) => s.reset);
 
   const interview = data?.data;
 
   useEffect(() => {
-    return () => {
+    if (id) {
+      init(id);
+    }
+  }, [id, init]);
+
+  useEffect(() => {
+    if (interview?.status === "completed") {
       reset();
-    };
-  }, [reset]);
+    }
+  }, [interview?.status, reset]);
 
   if (isLoading) {
     return (
