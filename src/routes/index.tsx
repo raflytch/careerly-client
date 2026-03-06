@@ -14,6 +14,14 @@ import EditResumePage from "@/modules/resume/pages/EditResumePage";
 import ResumeDetailPage from "@/modules/resume/pages/ResumeDetailPage";
 import AtsChecksPage from "@/modules/ats/pages/AtsChecksPage";
 import AtsCheckDetailPage from "@/modules/ats/pages/AtsCheckDetailPage";
+import InterviewsPage from "@/modules/interview/pages/InterviewsPage";
+import CreateInterviewPage from "@/modules/interview/pages/CreateInterviewPage";
+import InterviewDetailPage from "@/modules/interview/pages/InterviewDetailPage";
+import PlansPage from "@/modules/plan/pages/PlansPage";
+import TransactionsPage from "@/modules/plan/pages/TransactionsPage";
+import TransactionCallbackPage from "@/modules/plan/pages/TransactionCallbackPage";
+import TransactionSuccessPage from "@/modules/plan/pages/TransactionSuccessPage";
+import TransactionPendingPage from "@/modules/plan/pages/TransactionPendingPage";
 import NotFoundPage from "@/modules/errors/NotFoundPage";
 
 export const router = createBrowserRouter([
@@ -76,6 +84,38 @@ export const router = createBrowserRouter([
           {
             path: "ats-checks/:id",
             element: <AtsCheckDetailPage />,
+          },
+          {
+            path: "interviews",
+            element: <InterviewsPage />,
+          },
+          {
+            path: "interviews/create",
+            element: <CreateInterviewPage />,
+          },
+          {
+            path: "interviews/:id",
+            element: <InterviewDetailPage />,
+          },
+          {
+            path: "plans",
+            element: <PlansPage />,
+          },
+          {
+            path: "transactions",
+            element: <TransactionsPage />,
+          },
+          {
+            path: "transactions/callback",
+            element: <TransactionCallbackPage />,
+          },
+          {
+            path: "transactions/success",
+            element: <TransactionSuccessPage />,
+          },
+          {
+            path: "transactions/pending",
+            element: <TransactionPendingPage />,
           },
         ],
       },

@@ -18,12 +18,18 @@ import {
   X,
   FileText,
   FileSearch,
+  BrainCircuit,
+  CreditCard,
+  Receipt,
 } from "lucide-react";
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/dashboard/resumes", label: "Resume", icon: FileText },
   { to: "/dashboard/ats-checks", label: "ATS Review", icon: FileSearch },
+  { to: "/dashboard/interviews", label: "Interview", icon: BrainCircuit },
+  { to: "/dashboard/plans", label: "Paket", icon: CreditCard },
+  { to: "/dashboard/transactions", label: "Transaksi", icon: Receipt },
   { to: "/dashboard/profile", label: "Profile", icon: User },
 ];
 
