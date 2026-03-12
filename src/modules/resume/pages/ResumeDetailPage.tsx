@@ -163,7 +163,7 @@ export default function ResumeDetailPage() {
         </Card>
       )}
 
-      {content.experience.length > 0 && (
+      {(content.experience?.length ?? 0) > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
@@ -196,7 +196,7 @@ export default function ResumeDetailPage() {
         </Card>
       )}
 
-      {content.education.length > 0 && (
+      {(content.education?.length ?? 0) > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
@@ -226,7 +226,7 @@ export default function ResumeDetailPage() {
         </Card>
       )}
 
-      {content.skills.length > 0 && (
+      {(content.skills?.length ?? 0) > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Skills</CardTitle>
@@ -243,7 +243,7 @@ export default function ResumeDetailPage() {
         </Card>
       )}
 
-      {content.achievements.length > 0 && (
+      {(content.achievements?.length ?? 0) > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
@@ -264,7 +264,7 @@ export default function ResumeDetailPage() {
         </Card>
       )}
 
-      {content.volunteer.length > 0 && (
+      {(content.volunteer?.length ?? 0) > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
@@ -296,7 +296,7 @@ export default function ResumeDetailPage() {
         </Card>
       )}
 
-      {content.languages.length > 0 && (
+      {(content.languages?.length ?? 0) > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
